@@ -23,12 +23,11 @@
     "type": "git",
     "url": "https://git.foxminded.ua/foxstudent103641/nodejs-aws-lambda-weather-by-ip.git"
   },
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "lint": "eslint . && prettier -c \"**/*.js\"",
-    "format": "eslint . --fix && prettier --write \"**/*.js\"",
+    "start": "node index.mjs",
+    "lint": "eslint . && prettier -c \"**/*.mjs\"",
+    "format": "eslint . --fix && prettier --write \"**/*.mjs\"",
     "prepare": "husky install"
   },
   "devDependencies": {
