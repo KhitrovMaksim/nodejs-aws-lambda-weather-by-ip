@@ -5,13 +5,13 @@ import { ipStackApiResponseParser } from './lib/ipStackApiResponseParser.mjs';
 import { openWeatherMapApiUrlBuilder } from './lib/openWeatherMapApiUrlBuilder.mjs';
 import { openWeatherMapApiResponseParser } from './lib/openWeatherMapApiResponseParser.mjs';
 import { getHtmlWeatherByIp } from './lib/getHtmlWeatherByIp.mjs';
-import { TOKEN_WEATHER_API, IP_STACK_TOKEN } from './config.mjs';
+import { TOKEN_WEATHER_API, TOKEN_IP_STACK_API } from './config.mjs';
 
 export const handler = async (event, context, callback) => {
   try {
     const ip = event['requestContext']['http']['sourceIp'];
 
-    const urlIpApi = ipStackApiUrlBuilder(IP_STACK_TOKEN, ip);
+    const urlIpApi = ipStackApiUrlBuilder(TOKEN_IP_STACK_API, ip);
     const jsonIpApi = await httpGetJson(urlIpApi);
     const { latitude, longitude } = ipStackApiResponseParser(jsonIpApi);
 

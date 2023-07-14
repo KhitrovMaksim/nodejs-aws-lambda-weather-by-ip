@@ -1,2 +1,2 @@
-export const TOKEN_WEATHER_API = process.env.OPEN_WEATHER_MAP_TOKEN,
-  IP_STACK_TOKEN = process.env.IP_STACK_TOKEN;
+export const TOKEN_WEATHER_API = process.env.TOKEN_WEATHER_API,
+  TOKEN_IP_STACK_API = process.env.TOKEN_IP_STACK_API;
