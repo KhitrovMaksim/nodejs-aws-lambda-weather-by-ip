@@ -1,12 +1,5 @@
 class WeatherPresenter {
-  constructor(data) {
-    this.temperature = data.temperature;
-    this.country = data.country;
-    this.place = data.place;
-    this.description = data.description;
-  }
-
-  getHtml() {
+  getHtml(data) {
     return ` \
     <html lang="en">\
     <head>\
@@ -19,10 +12,10 @@ class WeatherPresenter {
         <span class="fs-4">Weather forecast by your IP address</span>\
     </header>\
     <main>\
-        <h1 class="text-body-emphasis">${this.temperature}°C</h1>\
-        <p class="fs-5 col-md-8">Country: ${this.country}</p>\
-        <p class="fs-5 col-md-8">Place: ${this.place}</p>\
-        <p class="fs-5 col-md-8">Description: ${this.description}</p>\
+        <h1 class="text-body-emphasis">${data.temperature}°C</h1>\
+        <p class="fs-5 col-md-8">Country: ${data.country}</p>\
+        <p class="fs-5 col-md-8">Place: ${data.place}</p>\
+        <p class="fs-5 col-md-8">Description: ${data.description}</p>\
     </main>\
     <footer class="pt-5 my-5 text-body-secondary border-top">\
         Created by Khitrov Maksim · © 2023\
@@ -35,4 +28,4 @@ class WeatherPresenter {
   }
 }
 
-module.exports = WeatherPresenter;
+module.exports = new WeatherPresenter();
