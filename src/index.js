@@ -4,12 +4,12 @@ const WeatherService = require('./service/weather.service');
 exports.controller = async (event, context, callback) => {
   const ip = event.requestContext.http.sourceIp;
 
-  const weatherForecastData = WeatherService.getWeatherForecast(ip);
-  const weatherSiteContent = WeatherPresenter.getHtml(weatherForecastData);
+  const weatherForecastData = await WeatherService.getWeatherForecast(ip);
+  const weatherPage = WeatherPresenter.getHtml(weatherForecastData);
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'text/html' },
-    body: weatherSiteContent,
+    body: weatherPage,
   };
 };
