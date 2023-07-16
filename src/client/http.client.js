@@ -1,3 +1,6 @@
+const { promisify } = require('util');
+const https = require('https');
+
 class HttpClient {
   request(data) {
     const url = new URL(data.url);
@@ -7,56 +10,60 @@ class HttpClient {
       path: url.pathname + url.search,
     };
 
-    return new Promise((resolve, reject) => {
-      const get = httpModule.get(options, (res) => {
-        this.getStreamData(res)
-          .then((json) => {
-            if (res.statusCode !== 200) {
-              const message = `Request to ${url} failed with status code ${res.statusCode}`;
-              const error = new Error(`${message}\n${json}`);
-              reject(error);
-              return;
-            }
+    const getStreamData = (stream) =>
+      new Promise((resolve, reject) => {
+        const chunks = [];
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('end', () => {
+          const dataBuffer = Buffer.concat(chunks).toString();
+          resolve(dataBuffer);
+        });
+        stream.on('error', (error) => reject(error));
+      });
 
-            const contentType = res.headers['content-type'];
-            if (!contentType.startsWith('application/json')) {
-              const error = new Error(`Invalid Content-Type: ${contentType}`);
-              res.resume();
-              reject(error);
-              return;
-            }
+    // eslint-disable-next-line no-shadow
+    httpModule.get[promisify.custom] = (options) =>
+      new Promise((resolve, reject) => {
+        httpModule
+          .get(options, (res) => {
+            getStreamData(res)
+              .then((json) => {
+                if (res.statusCode !== 200) {
+                  const message = `Request to ${url} failed with status code ${res.statusCode}`;
+                  const error = new Error(`${message}\n${json}`);
+                  reject(error);
+                  return;
+                }
 
-            let object = null;
-            try {
-              object = JSON.parse(json);
-            } catch (error) {
-              reject(error);
-              return;
-            }
-            resolve(object);
+                const contentType = res.headers['content-type'];
+                if (!contentType.startsWith('application/json')) {
+                  const error = new Error(`Invalid Content-Type: ${contentType}`);
+                  res.resume();
+                  reject(error);
+                  return;
+                }
+
+                let object = null;
+                try {
+                  object = JSON.parse(json);
+                } catch (error) {
+                  reject(error);
+                  return;
+                }
+                resolve(object);
+              })
+              .catch((err) => {
+                reject(err);
+              });
           })
-          .catch((err) => {
-            reject(err);
+          .on('error', (e) => {
+            // eslint-disable-next-line no-console
+            console.error(e);
           });
       });
+    const get = promisify(https.get);
 
-      get.on('error', (e) => {
-        // eslint-disable-next-line no-console
-        console.error(e);
-      });
-    });
-  }
-
-  getStreamData(stream) {
-    return new Promise((resolve, reject) => {
-      const chunks = [];
-      stream.on('data', (chunk) => chunks.push(chunk));
-      stream.on('end', () => {
-        const data = Buffer.concat(chunks).toString();
-        resolve(data);
-      });
-      stream.on('error', (error) => reject(error));
-    });
+    return get(options);
   }
 
   // eslint-disable-next-line consistent-return
