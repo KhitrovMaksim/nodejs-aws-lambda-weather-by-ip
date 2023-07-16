@@ -12,5 +12,8 @@ module.exports = {
   },
   rules: {
     'class-methods-use-this': 'off',
+    'no-unused-vars': 'off',
+    'global-require': 'off',
+    'max-len': 'off',
   },
 };

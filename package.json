@@ -25,8 +25,8 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint . && prettier -c \"**/*.mjs\"",
-    "format": "eslint . --fix && prettier --write \"**/*.mjs\"",
+    "lint": "eslint . && prettier -c \"**/*.js\"",
+    "format": "eslint . --fix && prettier --write \"**/*.js\"",
     "prepare": "husky install"
   },
   "devDependencies": {
