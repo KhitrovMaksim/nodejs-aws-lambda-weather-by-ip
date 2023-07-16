@@ -1,23 +1,20 @@
 class HttpClient {
   request(data) {
     const url = new URL(data.url);
-    const http = this.getHttpModule(url.protocol);
+    const httpModule = this.getHttpModule(url.protocol);
     const options = {
       hostname: url.hostname,
       path: url.pathname + url.search,
     };
-    return new Promise((resolve, reject) => {
-      http
-        .get(options, (res) => {
-          this.getStreamData(res, (err, json) => {
-            if (err) {
-              reject(err);
-              return;
-            }
 
+    return new Promise((resolve, reject) => {
+      const get = httpModule.get(options, (res) => {
+        this.getStreamData(res)
+          .then((json) => {
             if (res.statusCode !== 200) {
               const message = `Request to ${url} failed with status code ${res.statusCode}`;
-              reject(new Error(`${message}\n${json}`));
+              const error = new Error(`${message}\n${json}`);
+              reject(error);
               return;
             }
 
@@ -37,23 +34,29 @@ class HttpClient {
               return;
             }
             resolve(object);
+          })
+          .catch((err) => {
+            reject(err);
           });
-        })
-        .on('error', (e) => {
-          // eslint-disable-next-line no-console
-          console.error(e);
-        });
+      });
+
+      get.on('error', (e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      });
     });
   }
 
-  getStreamData(stream, callback) {
-    const chunks = [];
-    stream.on('data', (chunk) => chunks.push(chunk));
-    stream.on('end', () => {
-      const data = Buffer.concat(chunks).toString();
-      callback(null, data);
+  getStreamData(stream) {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      stream.on('data', (chunk) => chunks.push(chunk));
+      stream.on('end', () => {
+        const data = Buffer.concat(chunks).toString();
+        resolve(data);
+      });
+      stream.on('error', (error) => reject(error));
     });
-    stream.on('error', callback);
   }
 
   // eslint-disable-next-line consistent-return
