@@ -1,17 +1,17 @@
-class HttpGetJsonClient {
+class HttpClient {
   constructor(url) {
     this.url = new URL(url);
-    this.http = this.#getHttpModule(this.url.protocol);
+    this.http = this.getHttpModule(this.url.protocol);
     this.options = {
       hostname: this.url.hostname,
       path: this.url.pathname + this.url.search,
     };
   }
 
-  getResponseData() {
+  getJsonData() {
     return new Promise((resolve, reject) => {
       this.http.get(this.options, (res) => {
-        this.#getStreamData(res, (err, json) => {
+        this.getStreamData(res, (err, json) => {
           if (err) {
             reject(err);
             return;
@@ -46,7 +46,7 @@ class HttpGetJsonClient {
     });
   }
 
-  #getStreamData(stream, callback) {
+  getStreamData(stream, callback) {
     const chunks = [];
     stream.on('data', (chunk) => chunks.push(chunk));
     stream.on('end', () => {
@@ -56,7 +56,7 @@ class HttpGetJsonClient {
     stream.on('error', callback);
   }
 
-  #getHttpModule(protocol) {
+  getHttpModule(protocol) {
     if (protocol === 'https:') {
       return require('https');
     }
@@ -66,4 +66,4 @@ class HttpGetJsonClient {
   }
 }
 
-module.exports = HttpGetJsonClient;
+module.exports = HttpClient;

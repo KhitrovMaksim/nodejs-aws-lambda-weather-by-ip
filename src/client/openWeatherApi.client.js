@@ -1,10 +1,10 @@
-const HttpGetJsonClient = require('./httpGetJson.client');
+const HttpClient = require('./http.client');
 
 class OpenWeatherApiClient {
   async getWeatherForecast(latitude, longitude, token) {
     const urlOpenWeatherAPI = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${token}&units=metric`;
-    const response = new HttpGetJsonClient(urlOpenWeatherAPI);
-    const weatherForecast = await response.getResponseData();
+    const response = new HttpClient(urlOpenWeatherAPI);
+    const weatherForecast = await response.getJsonData();
     return weatherForecast;
   }
 
