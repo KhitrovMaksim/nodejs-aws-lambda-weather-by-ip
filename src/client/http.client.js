@@ -1,17 +1,14 @@
 class HttpClient {
-  constructor(url) {
-    this.url = new URL(url);
-    this.http = this.getHttpModule(this.url.protocol);
-    this.options = {
-      hostname: this.url.hostname,
-      path: this.url.pathname + this.url.search,
+  request(data) {
+    const url = new URL(data.url);
+    const http = this.getHttpModule(url.protocol);
+    const options = {
+      hostname: url.hostname,
+      path: url.pathname + url.search,
     };
-  }
-
-  request() {
     return new Promise((resolve, reject) => {
-      this.http
-        .get(this.options, (res) => {
+      http
+        .get(options, (res) => {
           this.getStreamData(res, (err, json) => {
             if (err) {
               reject(err);
@@ -19,7 +16,7 @@ class HttpClient {
             }
 
             if (res.statusCode !== 200) {
-              const message = `Request to ${this.url} failed with status code ${res.statusCode}`;
+              const message = `Request to ${url} failed with status code ${res.statusCode}`;
               reject(new Error(`${message}\n${json}`));
               return;
             }
